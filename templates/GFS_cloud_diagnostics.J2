@@ -1,0 +1,23 @@
+module GFS_cloud_diagnostics_mod
+  use machine,                 only: kind_phys
+  use physparam,               only: icldflg
+  use module_radiation_clouds, only: gethml
+contains
+{% for scheme in scheme_list %}
+{% for routine in scheme.init, scheme.run, scheme.finalize %}
+subroutine {{ routine.name }}( 
+    {% if routine.attrs %} ,
+      & {% endif %})
+ implicit none
+{% for attr in routine.attrs %}
+        {{ attr.type_string }}, {{ attr.dimensions }},  intent(in) ::  &
+        {{ attr.local_name }},      &
+  {% endfor %}
+ {% for attr in routine.attrs %}
+        {{ attr.type_string }}, {{ attr.dimensions }}, intent(out) :: &
+        {{ attr.local_name }},       &
+  {% endfor %}
+end subroutine {{ routine.name }}
+{% endfor %}
+{% endfor %}
+end module GFS_cloud_diagnostics_mod
