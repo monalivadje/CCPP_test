@@ -5,19 +5,21 @@ use module_radiation_clouds, only: gethml
 contains
 {% for scheme in scheme_list %}
 {% for routine in scheme.init, scheme.run, scheme.finalize %}
-   subroutine {{ routine.name }}( 
-   {% if routine.attrs %} ,    &
+{% for ddt in routine.derived_data_types %}
+   subroutine {{ ddt.name }}( 
+   {% if ddt.attrs %} ,    &
    {% endif %})
 implicit none
-{% for attr in routine.attrs %}
+{% for attr in ddt.attrs %}
         {{ attr.type_string }}, {{ attr.dimensions }},  intent(in) ::  &
         {{ attr.local_name }},      &
 {% endfor %}
-{% for attr in routine.attrs %}
+{% for attr in ddt.attrs %}
         {{ attr.type_string }}, {{ attr.dimensions }}, intent(out) :: &
         {{ attr.local_name }},       &
 {% endfor %}
-end subroutine {{ routine.name }}
+end subroutine {{ ddt.name }}
+{% endfor %}
 {% endfor %}
 {% endfor %}
 end module GFS_cloud_diagnostics_mod
